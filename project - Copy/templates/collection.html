@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection | Luxe Timepieces</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .collection-header {
+            padding-top: 100px;
+            text-align: center;
+            background: var(--light-bg);
+            padding-bottom: 2rem;
+        }
+
+        .collection-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .collection-header p {
+            color: var(--text-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .collection-filters {
+            padding: 2rem 5%;
+            background: var(--white);
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: var(--light-bg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 5px;
+        }
+
+        .filter-btn.active {
+            background: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .sort-options {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .sort-select {
+            padding: 0.8rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        .products-grid {
+            padding: 2rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            background: var(--secondary-color);
+            color: var(--white);
+            z-index: 1001;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="logo">LUXE TIMEPIECES</a>
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('collection') }}">Collection</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        </div>
+        <div class="nav-icons">
+            <a href="#" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Collection Header -->
+    <header class="collection-header">
+        <h1>Our Collection</h1>
+        <p>Discover our curated selection of the world's finest timepieces</p>
+    </header>
+
+    <!-- Collection Filters -->
+    <section class="collection-filters">
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Watches</button>
+            <button class="filter-btn" data-filter="swiss">Swiss Made</button>
+            <button class="filter-btn" data-filter="limited">Limited Edition</button>
+            <button class="filter-btn" data-filter="classic">Classic</button>
+        </div>
+        <div class="sort-options">
+            <select class="sort-select" id="sort-by">
+                <option value="default">Sort By</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name: A to Z</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="featured-products">
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card" data-category="{{ product.category }}">
+                <img src="{{ url_for('static', filename='images/' + product.image) }}" 
+                     alt="{{ product.name }}" 
+                     class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-brand">{{ product.brand }}</p>
+                    <p class="product-category">{{ product.category }}</p>
+                    <p class="product-price">₹{{ "{:,.0f}".format(product.price) }}</p>
+                    <button class="add-to-cart" data-id="{{ product._id }}">Add to Cart</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button class="close-cart">&times;</button>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        <div class="cart-total">
+            <h4>Total: <span>₹0.00</span></h4>
+            <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('collection') }}">Collection</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Luxe Timepieces. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Update cart count on page load
+            updateCartCount();
+
+            // Filter functionality
+            $('.filter-btn').click(function() {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                const filter = $(this).data('filter');
+                if (filter === 'all') {
+                    $('.product-card').show();
+                } else {
+                    $('.product-card').hide();
+                    $(`.product-card[data-category="${filter}"]`).show();
+                }
+            });
+
+            // Sort functionality
+            $('#sort-by').change(function() {
+                const sortValue = $(this).val();
+                const products = $('.product-card').toArray();
+                
+                products.sort(function(a, b) {
+                    const priceA = parseFloat($(a).find('.product-price').text().replace('₹', '').replace(',', ''));
+                    const priceB = parseFloat($(b).find('.product-price').text().replace('₹', '').replace(',', ''));
+                    const nameA = $(a).find('.product-name').text();
+                    const nameB = $(b).find('.product-name').text();
+                    
+                    switch(sortValue) {
+                        case 'price-low':
+                            return priceA - priceB;
+                        case 'price-high':
+                            return priceB - priceA;
+                        case 'name':
+                            return nameA.localeCompare(nameB);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                const productsGrid = $('.products-grid');
+                products.forEach(function(product) {
+                    productsGrid.append(product);
+                });
+            });
+
+            // Add to cart functionality
+            $('.add-to-cart').click(function() {
+                const productId = $(this).data('id');
+                
+                $.ajax({
+                    url: '/add_to_cart',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ product_id: productId }),
+                    success: function(response) {
+                        updateCartCount();
+                        updateCartSidebar();
+                        showNotification('Product added to cart!');
+                    },
+                    error: function(xhr, status, error) {
+                        showNotification('Error adding product to cart', 'error');
+                    }
+                });
+            });
+
+            // Cart sidebar toggle
+            $('.cart-icon').click(function(e) {
+                e.preventDefault();
+                $('.cart-sidebar').addClass('active');
+                updateCartSidebar();
+            });
+
+            $('.close-cart').click(function() {
+                $('.cart-sidebar').removeClass('active');
+            });
+
+            // Update cart count
+            function updateCartCount() {
+                $.get('/get_cart', function(response) {
+                    $('.cart-count').text(response.cart_count);
+                });
+            }
+
+            // Update cart sidebar
+            function updateCartSidebar() {
+                $.get('/get_cart', function(response) {
+                    const cart = response.cart;
+                    let cartHtml = '';
+                    let total = 0;
+
+                    cart.forEach(function(item) {
+                        cartHtml += `
+                            <div class="cart-item" data-id="${item.product_id}">
+                                <img src="/static/images/${item.image}" alt="${item.name}">
+                                <div class="item-details">
+                                    <h4>${item.name}</h4>
+                                    <p>₹${item.price.toLocaleString()}</p>
+                                    <div class="quantity-controls">
+                                        <button class="quantity-btn minus">-</button>
+                                        <span class="quantity">${item.quantity}</span>
+                                        <button class="quantity-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <button class="remove-item">&times;</button>
+                            </div>
+                        `;
+                        total += item.price * item.quantity;
+                    });
+
+                    $('.cart-items').html(cartHtml);
+                    $('.cart-total span').text('₹' + total.toLocaleString());
+
+                    // Add event listeners for quantity buttons
+                    addQuantityListeners();
+                });
+            }
+
+            // Add quantity control listeners
+            function addQuantityListeners() {
+                $('.quantity-btn').click(function() {
+                    const item = $(this).closest('.cart-item');
+                    const productId = item.data('id');
+                    const quantitySpan = item.find('.quantity');
+                    let quantity = parseInt(quantitySpan.text());
+
+                    if ($(this).hasClass('minus')) {
+                        quantity = Math.max(0, quantity - 1);
+                    } else {
+                        quantity += 1;
+                    }
+
+                    $.ajax({
+                        url: '/update_cart',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            product_id: productId,
+                            quantity: quantity
+                        }),
+                        success: function(response) {
+                            updateCartCount();
+                            updateCartSidebar();
+                        }
+                    });
+                });
+
+                $('.remove-item').click(function() {
+                    const item = $(this).closest('.cart-item');
+                    const productId = item.data('id');
+
+                    $.ajax({
+                        url: '/remove_from_cart',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ product_id: productId }),
+                        success: function(response) {
+                            updateCartCount();
+                            updateCartSidebar();
+                            showNotification('Item removed from cart');
+                        }
+                    });
+                });
+            }
+
+            // Show notification
+            function showNotification(message, type = 'success') {
+                const notification = $(`<div class="notification ${type}">${message}</div>`);
+                $('body').append(notification);
+
+                setTimeout(function() {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Checkout button
+            $('.checkout-btn').click(function() {
+                window.location.href = '/payment';
+            });
+        });
+    </script>
+</body>
+</html> 

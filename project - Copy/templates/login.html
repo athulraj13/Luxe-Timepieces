@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Luxe Timepieces</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .login-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1rem 2rem;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url("{{ url_for('static', filename='images/bg.jpg') }}");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-container {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .form-group input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+
+        .forgot-password {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .login-btn {
+            background: var(--secondary-color);
+            color: var(--white);
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .login-btn:hover {
+            background: #a88f3d;
+        }
+
+        .register-link {
+            text-align: center;
+            color: #666;
+            margin-top: 1rem;
+        }
+
+        .register-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Add styles for flash messages here too */
+        .flash-messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .flash-message {
+            padding: 15px 25px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .flash-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .flash-error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .flash-close {
+            float: right;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Add flash messages container -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span class="flash-close">&times;</span>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="logo">LUXE TIMEPIECES</a>
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('collection') }}">Collection</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="login-section">
+        <div class="login-container">
+            <h2>Welcome Back</h2>
+            <p class="login-subtitle">Sign in to your account</p>
+            
+            <!-- Login Form -->
+            <div id="login-section">
+                <form id="login-form" class="login-form" method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="login-btn">Sign In</button>
+                    <p class="register-link">Don't have an account? <a href="#" id="show-register">Register</a></p>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-section" class="hidden">
+                <h2>Create Account</h2>
+                <p class="login-subtitle">Join our community</p>
+                <form id="register-form" class="login-form" method="POST" action="{{ url_for('register') }}">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Create Account</button>
+                    <p class="register-link">Already have an account? <a href="#" id="show-login">Sign In</a></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('collection') }}">Collection</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Luxe Timepieces. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle between login and register forms
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            const showRegisterBtn = document.getElementById('show-register');
+            const showLoginBtn = document.getElementById('show-login');
+
+            showRegisterBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+            });
+
+            showLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+            });
+
+            // Form validation for registration
+            const registerForm = document.getElementById('register-form');
+            registerForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Passwords do not match!');
+                }
+            });
+
+            // Handle flash messages
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                // Auto-dismiss after 5 seconds
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 5000);
+
+                // Manual close button
+                const closeBtn = message.querySelector('.flash-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        message.style.opacity = '0';
+                        setTimeout(function() {
+                            message.remove();
+                        }, 500);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,126 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Get cart items from localStorage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Display order summary
+    displayOrderSummary(cart);
+    
+    // Handle payment form submission
+    const paymentForm = document.getElementById('payment-form');
+    paymentForm.addEventListener('submit', handlePayment);
+
+    // Format card number input
+    const cardNumber = document.getElementById('card-number');
+    cardNumber.addEventListener('input', formatCardNumber);
+
+    // Format expiry date input
+    const expiryDate = document.getElementById('expiry');
+    expiryDate.addEventListener('input', formatExpiryDate);
+
+    // Format CVV input
+    const cvv = document.getElementById('cvv');
+    cvv.addEventListener('input', formatCVV);
+
+    // Update cart count in navigation
+    const cartCountElement = document.querySelector('.cart-count');
+    cartCountElement.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+});
+
+function displayOrderSummary(cart) {
+    const orderItems = document.querySelector('.order-items');
+    const subtotalElement = document.getElementById('subtotal');
+    const shippingElement = document.getElementById('shipping');
+    const taxElement = document.getElementById('tax');
+    const totalElement = document.getElementById('total');
+
+    // Calculate totals
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const shipping = subtotal > 0 ? 50 : 0; // $50 shipping for orders
+    const tax = subtotal * 0.1; // 10% tax
+    const total = subtotal + shipping + tax;
+
+    // Display order items
+    orderItems.innerHTML = cart.map(item => `
+        <div class="order-item">
+            <img src="${item.image}" alt="${item.name}">
+            <div class="order-item-details">
+                <div class="order-item-name">${item.name}</div>
+                <div class="order-item-price">$${item.price.toLocaleString()} x ${item.quantity}</div>
+            </div>
+        </div>
+    `).join('');
+
+    // Display totals
+    subtotalElement.textContent = `$${subtotal.toLocaleString()}`;
+    shippingElement.textContent = `$${shipping.toLocaleString()}`;
+    taxElement.textContent = `$${tax.toLocaleString()}`;
+    totalElement.textContent = `$${total.toLocaleString()}`;
+}
+
+function handlePayment(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(e.target);
+    const paymentData = {
+        shipping: {
+            name: formData.get('full-name'),
+            email: formData.get('email'),
+            address: formData.get('address'),
+            city: formData.get('city'),
+            state: formData.get('state'),
+            zip: formData.get('zip'),
+            country: formData.get('country')
+        },
+        payment: {
+            cardNumber: formData.get('card-number').replace(/\s/g, ''),
+            expiry: formData.get('expiry'),
+            cvv: formData.get('cvv'),
+            name: formData.get('card-name')
+        },
+        notes: formData.get('notes')
+    };
+
+    // Here you would typically make an API call to your payment processor
+    // For demo purposes, we'll just simulate a successful payment
+    console.log('Payment data:', paymentData);
+    
+    // Simulate payment processing
+    showLoadingState();
+    
+    setTimeout(() => {
+        // Simulate successful payment
+        alert('Payment successful! Thank you for your purchase.');
+        // Clear cart
+        localStorage.removeItem('cart');
+        // Redirect to home page
+        window.location.href = 'index.html';
+    }, 2000);
+}
+
+function formatCardNumber(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.replace(/(\d{4})/g, '$1 ').trim();
+    e.target.value = value;
+}
+
+function formatExpiryDate(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+    e.target.value = value;
+}
+
+function formatCVV(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 3);
+    e.target.value = value;
+}
+
+function showLoadingState() {
+    const submitButton = document.querySelector('.payment-btn');
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    submitButton.disabled = true;
+} 

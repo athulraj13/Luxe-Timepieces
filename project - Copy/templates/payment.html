@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment | Luxe Timepieces</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="logo">LUXE TIMEPIECES</a>
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('collection') }}">Collection</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        </div>
+    </nav>
+
+    <!-- Payment Section -->
+    <section class="payment-section">
+        <div class="payment-container">
+            <!-- Order Summary -->
+            <div class="payment-summary">
+                <h2>Order Summary</h2>
+                <div class="order-items">
+                    {% for item in cart_items %}
+                    <div class="order-item">
+                        <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.name }}">
+                        <div class="item-details">
+                            <h4>{{ item.name }}</h4>
+                            <p>Quantity: {{ item.quantity }}</p>
+                            <p>₹{{ "{:,.2f}".format(item.price * item.quantity) }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ "{:,.2f}".format(subtotal) }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Shipping</span>
+                        <span>₹{{ "{:,.2f}".format(shipping) }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax</span>
+                        <span>₹{{ "{:,.2f}".format(tax) }}</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Total</span>
+                        <span>₹{{ "{:,.2f}".format(total) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="payment-form-container">
+                <h2>Payment Details</h2>
+                <form id="payment-form" class="payment-form">
+                    <!-- Shipping Information -->
+                    <div class="form-section">
+                        <h3>Shipping Information</h3>
+                        <div class="form-group">
+                            <label for="full-name">Full Name</label>
+                            <input type="text" id="full-name" name="full-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" id="address" name="address" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" id="state" name="state" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="zip">ZIP Code</label>
+                                <input type="text" id="zip" name="zip" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <input type="text" id="country" name="country" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div class="form-section">
+                        <h3>Payment Information</h3>
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" name="card-number" required maxlength="19" placeholder="xxxx xxxx xxxx xxxx">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiry">Expiry Date</label>
+                                <input type="text" id="expiry" name="expiry" required placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" name="cvv" required maxlength="4">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-name">Name on Card</label>
+                            <input type="text" id="card-name" name="card-name" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="payment-btn">
+                        <i class="fas fa-lock"></i>
+                        Pay ₹{{ "{:,.2f}".format(total) }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('collection') }}">Collection</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Luxe Timepieces. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Format card number input
+            $('#card-number').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                value = value.replace(/(\d{4})/g, '$1 ').trim();
+                $(this).val(value);
+            });
+
+            // Format expiry date input
+            $('#expiry').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2);
+                }
+                $(this).val(value);
+            });
+
+            // Format CVV input
+            $('#cvv').on('input', function() {
+                $(this).val($(this).val().replace(/\D/g, ''));
+            });
+
+            // Handle form submission
+            $('#payment-form').submit(function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: '/process_payment',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        alert('Payment successful! Thank you for your purchase.');
+                        window.location.href = '/';
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error processing payment. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
