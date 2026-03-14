@@ -2,19 +2,6 @@
 
 A modern, responsive, and elegant e-commerce website showcasing premium luxury watches. Built with vanilla HTML, CSS, and JavaScript to ensure fast performance and smooth user experience.
 
-## 📋 Table of Contents
-- [Features](#features)
-- [Demo](#demo)
-- [Project Structure](#project-structure)
-- [Technology Stack](#technology-stack)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features in Detail](#features-in-detail)
-- [Browser Support](#browser-support)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
-
 ## ✨ Features
 
 ### Core Functionality
@@ -180,8 +167,7 @@ You are free to:
 
 **Athul Raj**
 - GitHub: [@athulraj13](https://github.com/athulraj13)
-- Email: [Add your email here]
-- Portfolio: [Add your portfolio URL here]
+- Email: [athul052005@gmail.com]
 
 ---
 
@@ -204,5 +190,3 @@ This project is a great resource for learning:
 ---
 
 **Happy coding! 🎉**
-
-*Last updated: 2026-03-05 04:06:04*
